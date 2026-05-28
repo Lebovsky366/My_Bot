@@ -5,14 +5,13 @@ from flask import Flask
 import telebot
 
 # --- Инициализация бота ---
-TELEGRAM_TOKEN = os.environ.get('8810806202:AAFnTdSPyDBbhZwIjx40Y-YJJ94OH_Xz0pg')
+# Токен теперь берётся из переменной окружения с именем TELEGRAM_TOKEN
+TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN')
 if not TELEGRAM_TOKEN:
     raise ValueError("Переменная окружения TELEGRAM_TOKEN не установлена!")
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
-
 app = Flask(__name__)
-
 
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
@@ -43,22 +42,17 @@ def send_time(message):
 def echo_all(message):
     bot.reply_to(message, message.text)
 
-
 def run_bot():
     print("Telegram бот запущен!")
     bot.infinity_polling()
-
 
 @app.route('/')
 def hello():
     return "Telegram бот запущен и работает!"
 
-
 if __name__ == '__main__':
-
     bot_thread = threading.Thread(target=run_bot)
     bot_thread.start()
-    
 
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
